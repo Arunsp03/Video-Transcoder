@@ -1,7 +1,8 @@
 import { exec } from "node:child_process";
-export const startFFMPEGContainer = (sourcePath: string) => {
+import { Video } from "./video";
+export const startFFMPEGContainer = (video: Video) => {
   try {
-    sourcePath = sourcePath.replace("\\", "/");
+    video.SourcePath = video.SourcePath.replace("\\", "/");
     console.log("source :",process.env.SOURCE_FOLDER)
     const sourceFolder=process.env.SOURCE_FOLDER??"";
     const destinationFolder=process.env.DESTINATION_FOLDER??"";
@@ -16,14 +17,14 @@ export const startFFMPEGContainer = (sourcePath: string) => {
       return;
     }
 
-    const destinationPathParams: string[] = sourcePath
+    const destinationPathParams: string[] = video.SourcePath
       .replace(sourceFolder,destinationFolder)
       .split(".");
     const destinationPath: string = destinationPathParams[0];
  
 
     exec(
-      `docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg  -i "/data/${sourcePath}" "/data/${destinationPath}.avi"`,
+      `docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg  -i "/data/${video.SourcePath}" -vf "scale=${video.Resolution}" "/data/${destinationPath}.avi"`,
       (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);

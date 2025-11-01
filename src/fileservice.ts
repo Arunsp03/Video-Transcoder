@@ -1,5 +1,6 @@
 import chokidar from "chokidar";
 import { startFFMPEGContainer } from "./shell";
+import { Video } from "./video";
 export const startFileWatcher = () => {
   try {
     const sourceFolderPath=process.env.SOURCE_FOLDER_PATH??""
@@ -11,7 +12,9 @@ export const startFileWatcher = () => {
     const watcher = chokidar.watch(sourceFolderPath);
     watcher.on("add", (path: string) => {
       console.log(`File has been added ${path}`);
-      startFFMPEGContainer(path);
+      const video:Video=new Video(path,".avi","1280:720")
+      video.startEncoding();
+    
     });
     
   } catch (err) {

@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startFFMPEGContainer = void 0;
 const node_child_process_1 = require("node:child_process");
-const startFFMPEGContainer = (sourcePath) => {
+const startFFMPEGContainer = (video) => {
     var _a, _b;
     try {
-        sourcePath = sourcePath.replace("\\", "/");
+        video.SourcePath = video.SourcePath.replace("\\", "/");
         console.log("source :", process.env.SOURCE_FOLDER);
         const sourceFolder = (_a = process.env.SOURCE_FOLDER) !== null && _a !== void 0 ? _a : "";
         const destinationFolder = (_b = process.env.DESTINATION_FOLDER) !== null && _b !== void 0 ? _b : "";
@@ -17,11 +17,11 @@ const startFFMPEGContainer = (sourcePath) => {
             console.error("DESTINATION_FOLDER environment variable not set");
             return;
         }
-        const destinationPathParams = sourcePath
+        const destinationPathParams = video.SourcePath
             .replace(sourceFolder, destinationFolder)
             .split(".");
         const destinationPath = destinationPathParams[0];
-        (0, node_child_process_1.exec)(`docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg  -i "/data/${sourcePath}" "/data/${destinationPath}.avi"`, (error, stdout, stderr) => {
+        (0, node_child_process_1.exec)(`docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg  -i "/data/${video.SourcePath}" -vf "scale=${video.Resolution}" "/data/${destinationPath}.avi"`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
                 return;

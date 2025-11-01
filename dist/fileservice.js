@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startFileWatcher = void 0;
 const chokidar_1 = __importDefault(require("chokidar"));
-const shell_1 = require("./shell");
+const video_1 = require("./video");
 const startFileWatcher = () => {
     var _a;
     try {
@@ -17,7 +17,8 @@ const startFileWatcher = () => {
         const watcher = chokidar_1.default.watch(sourceFolderPath);
         watcher.on("add", (path) => {
             console.log(`File has been added ${path}`);
-            (0, shell_1.startFFMPEGContainer)(path);
+            const video = new video_1.Video(path, ".avi", "1280:720");
+            video.startEncoding();
         });
     }
     catch (err) {
