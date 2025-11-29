@@ -22,10 +22,10 @@ class Video {
     set SourceExtensionType(sourceExtensionType) {
         this._sourceExtensionType = sourceExtensionType;
     }
-    get SourceDestinationType() {
+    get DestinationExtensionType() {
         return this._destinationExtensionType;
     }
-    set SourceDestinationType(destinationExtensionType) {
+    set DestinationExtensionType(destinationExtensionType) {
         this._destinationExtensionType = destinationExtensionType;
     }
     get Resolution() {
