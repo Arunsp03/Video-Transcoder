@@ -12,44 +12,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.startFFMPEGContainer = void 0;
 const node_child_process_1 = require("node:child_process");
 const fileservice_1 = require("./fileservice");
-const startFFMPEGContainer = (video) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    try {
-        video.SourcePath = video.SourcePath.replace("\\", "/");
-        console.log("source :", process.env.SOURCE_FOLDER);
-        const sourceFolder = (_a = process.env.SOURCE_FOLDER) !== null && _a !== void 0 ? _a : "";
-        const destinationFolder = (_b = process.env.DESTINATION_FOLDER) !== null && _b !== void 0 ? _b : "";
-        if (!sourceFolder || sourceFolder.trim().length == 0) {
-            console.error("SOURCE_FOLDER environment variable not set");
-            return;
-        }
-        if (!destinationFolder || destinationFolder.trim().length == 0) {
-            console.error("DESTINATION_FOLDER environment variable not set");
-            return;
-        }
-        const destinationPathParams = video.SourcePath
-            .replace(sourceFolder, destinationFolder)
-            .split(".");
-        const destinationPath = destinationPathParams[0];
-        console.log("destination extension type  : ", video.DestinationExtensionType);
-        (0, node_child_process_1.exec)(`docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg ` +
-            `-i "/data/${video.SourcePath}" ` +
-            `-vf "scale=${video.Resolution}:flags=lanczos" ` +
-            `-c:v libx264 -preset medium -crf 23 ` + // ✅ H.264
-            `-c:a aac ` + // ✅ AAC audio  
-            `"/data/${destinationPath}${video.DestinationExtensionType}"`, (error, stdout, stderr) => __awaiter(void 0, void 0, void 0, function* () {
-            if (error) {
-                console.error(`exec error: ${error}`);
+const startFFMPEGContainer = (video) => {
+    return new Promise((resolve, reject) => {
+        var _a, _b;
+        try {
+            video.SourcePath = video.SourcePath.replace("\\", "/");
+            const sourceFolder = (_a = process.env.SOURCE_FOLDER) !== null && _a !== void 0 ? _a : "";
+            const destinationFolder = (_b = process.env.DESTINATION_FOLDER) !== null && _b !== void 0 ? _b : "";
+            if (!sourceFolder || sourceFolder.trim().length == 0) {
+                console.error("SOURCE_FOLDER environment variable not set");
+                reject(new Error("SOURCE_FOLDER environment variable not set."));
                 return;
             }
-            //Remove the file from source directory
-            yield (0, fileservice_1.deleteFile)(`./${video.SourcePath}`);
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
-        }));
-    }
-    catch (err) {
-        console.error(err);
-    }
-});
+            if (!destinationFolder || destinationFolder.trim().length == 0) {
+                console.error("DESTINATION_FOLDER environment variable not set");
+                reject(new Error("DESTINATION_FOLDER environment variable not set"));
+                return;
+            }
+            const destinationPathParams = video.SourcePath.replace(sourceFolder, destinationFolder).split(".");
+            const destinationPath = destinationPathParams[0];
+            console.log("destination extension type  : ", video.DestinationExtensionType);
+            (0, node_child_process_1.exec)(`docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg ` +
+                `-i "/data/${video.SourcePath}" ` +
+                `-vf "scale=${video.Resolution}:flags=lanczos" ` +
+                `-c:v libx264 -preset medium -crf 23 ` +
+                `-c:a aac ` +
+                `"/data/${destinationPath}${video.DestinationExtensionType}"`, (error, stdout, stderr) => __awaiter(void 0, void 0, void 0, function* () {
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    reject(error);
+                    return;
+                }
+                //Remove the file from source directory
+                yield (0, fileservice_1.deleteFile)(`./${video.SourcePath}`);
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                resolve();
+            }));
+        }
+        catch (err) {
+            console.error(err);
+            reject(err);
+        }
+    });
+};
 exports.startFFMPEGContainer = startFFMPEGContainer;

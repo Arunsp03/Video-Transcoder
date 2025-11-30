@@ -1,4 +1,4 @@
-import { startFFMPEGContainer } from "./shell";
+import { startFFMPEGContainer } from "./shell"; 
 
 export class Video {
   private _sourcePath: string;
@@ -38,7 +38,7 @@ export class Video {
   set Resolution(resolution:string){
     this._resolution=resolution
   }
-  startEncoding(){
-    startFFMPEGContainer(this);
+  async startEncoding  (){
+    await startFFMPEGContainer(this);
   }
 }
