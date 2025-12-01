@@ -3,16 +3,14 @@ import { startFFMPEGContainer } from "./shell";
 export class Video {
   private _sourcePath: string;
   private _sourceExtensionType: string;
-  private _destinationExtensionType: string;
-  private _resolution:string
-  constructor(sourcePath: string, destinationExtensionType: string,resolution:string) {
+
+  constructor(sourcePath: string) {
     this._sourcePath = sourcePath;
     const sourcePathParams: string[] = sourcePath.split(".");
 
     this._sourceExtensionType = sourcePathParams[sourcePathParams.length - 1];
 
-    this._destinationExtensionType = destinationExtensionType;
-    this._resolution=resolution
+   
   }
   get SourcePath() {
     return this._sourcePath;
@@ -26,18 +24,7 @@ export class Video {
   set SourceExtensionType(sourceExtensionType: string) {
     this._sourceExtensionType = sourceExtensionType;
   }
-  get DestinationExtensionType() {
-    return this._destinationExtensionType;
-  }
-  set DestinationExtensionType(destinationExtensionType: string) {
-    this._destinationExtensionType = destinationExtensionType;
-  }
-  get Resolution():string{
-    return this._resolution;
-  }
-  set Resolution(resolution:string){
-    this._resolution=resolution
-  }
+
   async startEncoding  (){
     await startFFMPEGContainer(this);
   }

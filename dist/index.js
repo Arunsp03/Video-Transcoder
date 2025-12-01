@@ -9,20 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const child_process_1 = require("child_process");
 const fileservice_1 = require("./fileservice");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.configDotenv)();
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, fileservice_1.startFileWatcher)();
-        const workerProcess = (0, child_process_1.spawn)('node', ['./dist/worker.js'], {
-            stdio: 'inherit',
-        });
-        workerProcess.on('close', (code) => {
-            console.log(`Worker exited with code ${code}`);
-            process.exit(code);
-        });
     }
     catch (err) {
         console.error(err);

@@ -8,10 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startFFMPEGContainer = void 0;
 const node_child_process_1 = require("node:child_process");
 const fileservice_1 = require("./fileservice");
+const transcodingResolution = (_a = process.env.TRANSCODING_RESOLUTUION) !== null && _a !== void 0 ? _a : "1920x1080";
+const transcodingType = (_b = process.env.TRANSCODING_FILETYPE) !== null && _b !== void 0 ? _b : ".mp4";
 const startFFMPEGContainer = (video) => {
     return new Promise((resolve, reject) => {
         var _a, _b;
@@ -31,13 +34,12 @@ const startFFMPEGContainer = (video) => {
             }
             const destinationPathParams = video.SourcePath.replace(sourceFolder, destinationFolder).split(".");
             const destinationPath = destinationPathParams[0];
-            console.log("destination extension type  : ", video.DestinationExtensionType);
             (0, node_child_process_1.exec)(`docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg ` +
                 `-i "/data/${video.SourcePath}" ` +
-                `-vf "scale=${video.Resolution}:flags=lanczos" ` +
+                `-vf "scale=${transcodingResolution}:flags=lanczos" ` +
                 `-c:v libx264 -preset medium -crf 23 ` +
                 `-c:a aac ` +
-                `"/data/${destinationPath}${video.DestinationExtensionType}"`, (error, stdout, stderr) => __awaiter(void 0, void 0, void 0, function* () {
+                `"/data/${destinationPath}${transcodingType}"`, (error, stdout, stderr) => __awaiter(void 0, void 0, void 0, function* () {
                 if (error) {
                     console.error(`exec error: ${error}`);
                     reject(error);

@@ -12,12 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Video = void 0;
 const shell_1 = require("./shell");
 class Video {
-    constructor(sourcePath, destinationExtensionType, resolution) {
+    constructor(sourcePath) {
         this._sourcePath = sourcePath;
         const sourcePathParams = sourcePath.split(".");
         this._sourceExtensionType = sourcePathParams[sourcePathParams.length - 1];
-        this._destinationExtensionType = destinationExtensionType;
-        this._resolution = resolution;
     }
     get SourcePath() {
         return this._sourcePath;
@@ -30,18 +28,6 @@ class Video {
     }
     set SourceExtensionType(sourceExtensionType) {
         this._sourceExtensionType = sourceExtensionType;
-    }
-    get DestinationExtensionType() {
-        return this._destinationExtensionType;
-    }
-    set DestinationExtensionType(destinationExtensionType) {
-        this._destinationExtensionType = destinationExtensionType;
-    }
-    get Resolution() {
-        return this._resolution;
-    }
-    set Resolution(resolution) {
-        this._resolution = resolution;
     }
     startEncoding() {
         return __awaiter(this, void 0, void 0, function* () {

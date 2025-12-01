@@ -1,7 +1,8 @@
 import { exec } from "node:child_process";
 import { Video } from "./video";
 import { deleteFile } from "./fileservice";
-
+const transcodingResolution:string=process.env.TRANSCODING_RESOLUTUION??"1920x1080";
+const transcodingType:string=process.env.TRANSCODING_FILETYPE??".mp4";
 export const startFFMPEGContainer = (video: Video): Promise<void> => {
   return new Promise((resolve, reject) => {
     try {
@@ -24,18 +25,15 @@ export const startFFMPEGContainer = (video: Video): Promise<void> => {
         destinationFolder
       ).split(".");
       const destinationPath: string = destinationPathParams[0];
-      console.log(
-        "destination extension type  : ",
-        video.DestinationExtensionType
-      );
+     
 
       exec(
         `docker run --rm -v "${process.cwd()}:/data" jrottenberg/ffmpeg ` +
           `-i "/data/${video.SourcePath}" ` +
-          `-vf "scale=${video.Resolution}:flags=lanczos" ` +
+          `-vf "scale=${transcodingResolution}:flags=lanczos" ` +
           `-c:v libx264 -preset medium -crf 23 ` +
           `-c:a aac ` +
-          `"/data/${destinationPath}${video.DestinationExtensionType}"`,
+          `"/data/${destinationPath}${transcodingType}"`,
         async (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
